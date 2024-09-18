@@ -1,4 +1,4 @@
-import messageController from "./src/controllers/messageController";
+import messageController from "./src/controllers/messageController.js";
 
 export default handler = async (event) => {
     const {userID, message} = event.body;
