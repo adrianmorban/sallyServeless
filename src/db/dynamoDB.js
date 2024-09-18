@@ -4,22 +4,22 @@ import { GetCommand, PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dyn
 const client = new DynamoDBClient({ region: "us-east-1" });
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
-const retrieveSession = async (sessionId) => {
+const retrieveSession = async (sessionID) => {
     const command = new GetCommand({
         TableName: "sallySessions",
         Key: {
-            sessionID: sessionId,
+            sessionID,
         },
     });
     const response = await ddbDocClient.send(command);
     return response.Item;
 }
 
-const updateSession = async (sessionId, messages) => {
+const updateSession = async (sessionID, messages) => {
     const command = new PutCommand({
         TableName: "sallySessions",
         Item: {
-            sessionID: sessionId,
+            sessionID,
             messages,
         },
     });
