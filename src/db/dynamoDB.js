@@ -47,4 +47,20 @@ const updateSession = async (from, messages) => {
     return response;
 }
 
-export { retrieveSession, updateSession };
+const setAppointment = async (day, hour, fullName, dni) => {
+    const command = new PutCommand({
+        TableName: "sallyAppointments",
+        Item: {
+            day: day,
+            hour: hour,
+            fullName: fullName,
+            dni: dni,
+        },
+        removeUndefinedValues: true,
+        removeNullValues: true,
+    });
+    const response = await ddbDocClient.send(command);
+    return response;
+}
+
+export { retrieveSession, updateSession, setAppointment };
