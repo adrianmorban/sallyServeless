@@ -5,3 +5,5 @@ const sendMessage = async (chatID, message) => {
     const response = await fetch(url);
     return response.json();
 }
+
+export { sendMessage };
