@@ -4,15 +4,15 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-let accessKeyId = process.env.ACCESS_KEY_ID || '';
-let secretAccessKey = process.env.SECRET_ACCESS_KEY || '';
+// let accessKeyId = process.env.ACCESS_KEY_ID || '';
+// let secretAccessKey = process.env.SECRET_ACCESS_KEY || '';
 
 const client = new DynamoDBClient({ 
     region: "us-east-1",
-    credentials: {
-        accessKeyId: accessKeyId,
-        secretAccessKey: secretAccessKey,
-    }
+    // credentials: {
+    //     accessKeyId: accessKeyId,
+    //     secretAccessKey: secretAccessKey,
+    // }
 });
 
 const ddbDocClient = DynamoDBDocumentClient.from(client);
