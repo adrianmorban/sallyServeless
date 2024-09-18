@@ -54,7 +54,12 @@ export const openAICompletion = async (messages) => {
   if(completion.choices[0].tool_call === "set_appointment"){
     const {day, hour, fullName, dni} = completion.choices[0].tool_call_arguments;
     const result = await setAppointment(day, hour, fullName, dni);
-    return JSON.stringify(result);
+    if(result.httpStatusCode === 200){
+      return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}`;
+    }
+    else{
+      return 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.';
+    }
   }
 
   return completion.choices[0].message.content;
