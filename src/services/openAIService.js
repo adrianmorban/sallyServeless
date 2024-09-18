@@ -8,12 +8,12 @@ export const openAICompletion = async (messages) => {
   let messageToOpenAi = [
     {
       role: 'system', 
-      content: 'You are a helpful assistant who helps users schedule appointments.'
+      content: 'eres una asistente, presentate y di para quien trabajas, ya sabes para que estas entrenada'
     }
   ];
   messageToOpenAi.push(...messages);
   const completion = await client.chat.completions.create({
-    model: 'gpt-3.5-turbo',
+    model: 'ft:gpt-4o-2024-08-06:personal:sally:A8t20vlA',
     messages: messageToOpenAi,
   });
   return completion.choices[0].message.content;
