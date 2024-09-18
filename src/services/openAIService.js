@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { setAppointment } from '../db/dynamoDB';
+import { setAppointment } from '../db/dynamoDB.js';
 
 const setAppointmentCalling = {
   "name": "set_appointment",

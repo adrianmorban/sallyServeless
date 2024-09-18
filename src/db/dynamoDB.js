@@ -9,10 +9,10 @@ import { GetCommand, PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dyn
 
 const client = new DynamoDBClient({ 
     region: "us-east-1",
-    // credentials: {
-    //     accessKeyId: accessKeyId,
-    //     secretAccessKey: secretAccessKey,
-    // }
+    credentials: {
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
+    }
 });
 
 const ddbDocClient = DynamoDBDocumentClient.from(client);
