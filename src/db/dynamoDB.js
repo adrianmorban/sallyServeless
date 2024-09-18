@@ -1,8 +1,8 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { GetCommand, PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 
-dotenv.config();
+// dotenv.config();
 
 // let accessKeyId = process.env.ACCESS_KEY_ID || '';
 // let secretAccessKey = process.env.SECRET_ACCESS_KEY || '';
@@ -18,12 +18,11 @@ const client = new DynamoDBClient({
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 
 const retrieveSession = async (sessionID) => {
+    sessionID = sessionID.toString();
     const command = new GetCommand({
         TableName: "sallySessions",
         Key: {
-            sessionID: {
-                S: sessionID,
-            }
+            sessionID: sessionID,
         }
     });
     const response = await ddbDocClient.send(command);
@@ -35,7 +34,7 @@ const updateSession = async (from, messages) => {
     const command = new PutCommand({
         TableName: "sallySessions",
         Item: {
-            sessionID: id,
+            sessionID: id.toString(),
             first_name: first_name,
             last_name: last_name,
             language_code: language_code,

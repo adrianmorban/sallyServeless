@@ -4,8 +4,8 @@ import { openAICompletion } from '../services/openAIService.js';
 class MessageController {
 
     async getMessage(from, message) {
-        const {userID} = from;
-        const session = await retrieveSession(userID);
+        const {id} = from;
+        const session = await retrieveSession(id);
         const messages = session ? session.messages : [];
         messages.push({role: 'user', content: message});
         const completion = await openAICompletion(messages);
