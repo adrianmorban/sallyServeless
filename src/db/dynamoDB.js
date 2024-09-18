@@ -21,7 +21,9 @@ const updateSession = async (sessionID, messages) => {
     const command = new PutCommand({
         TableName: "sallySessions",
         Item: {
-            sessionID,
+            sessionID: {
+                S: sessionID,
+            },
             messages,
         },
     });
