@@ -41,6 +41,7 @@ const updateSession = async (from, messages) => {
             language_code: language_code,
             messages: messages,
         },
+        removeUndefinedValues: true,
     });
     const response = await ddbDocClient.send(command);
     return response;
