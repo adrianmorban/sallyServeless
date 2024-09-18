@@ -42,6 +42,7 @@ const updateSession = async (from, messages) => {
             messages: messages,
         },
         removeUndefinedValues: true,
+        removeNullValues: true,
     });
     const response = await ddbDocClient.send(command);
     return response;
