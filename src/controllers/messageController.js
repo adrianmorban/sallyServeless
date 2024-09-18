@@ -3,8 +3,7 @@ import { openAICompletion } from '../services/openAIService.js';
 
 class MessageController {
 
-    async getMessage(req, res){
-        const {userID, message} = req.body;
+    async getMessage(userID, message) {
         const session = await retrieveSession(userID);
         // const messages = session ? session.messages : [];
         // messages.push({role: 'user', content: message});
