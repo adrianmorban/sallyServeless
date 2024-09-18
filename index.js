@@ -1,8 +1,7 @@
 import messageController from "./src/controllers/messageController.js";
 
 const handler = async (event) => {
-    return event;
-    const {userID, message} = event.body;
+    const {userID, message} = event;
     const response = await messageController.getMessage(userID, message);
     return response;
 }
