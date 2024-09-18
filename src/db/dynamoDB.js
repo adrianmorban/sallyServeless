@@ -21,7 +21,9 @@ const retrieveSession = async (sessionID) => {
     const command = new GetCommand({
         TableName: "sallySessions",
         Key: {
-            sessionID,
+            sessionID: {
+                S: sessionID,
+            }
         }
     });
     const response = await ddbDocClient.send(command);
