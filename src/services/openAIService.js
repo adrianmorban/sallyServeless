@@ -51,6 +51,8 @@ export const openAICompletion = async (messages) => {
     tool_choice: "auto",
   });
 
+  return JSON.stringify(completion.choices[0]);
+
   if(completion.choices[0].tool_call === "set_appointment"){
     const {day, hour, fullName, dni} = completion.choices[0].tool_call_arguments;
     return `¿Estás seguro de que quieres agendar una cita para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}? habla claro wawawa`;
