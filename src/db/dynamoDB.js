@@ -51,6 +51,7 @@ const setAppointment = async (day, hour, fullName, dni) => {
     const command = new PutCommand({
         TableName: "sallyAppointments",
         Item: {
+            appointmentID: Date.now().toString(),
             day: day,
             hour: hour,
             fullName: fullName,
