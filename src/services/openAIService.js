@@ -1,6 +1,12 @@
 import OpenAI from 'openai';
 import { setAppointment } from '../db/dynamoDB.js';
 
+const now = new Date();
+
+const formattedDate = now.toISOString().split('T')[0];
+
+const formattedTime = now.toTimeString().split(' ')[0].slice(0, 5);
+
 const setAppointmentCalling = {
   type: "function",
   function: {
@@ -26,7 +32,7 @@ const setAppointmentCalling = {
             description: "The DNI of the client, it must be a string in the format xxx-xxxxxxx-x where x is a number and can be without the -.",
           }
         },
-        required: ["day", "hour", "fullName", "dni"],
+        required: ["day", "hour", "fullName", "cedula"],
     }
   }
 }
@@ -40,7 +46,7 @@ export const openAICompletion = async (messages) => {
   let messageToOpenAi = [
     {
       role: 'system', 
-      content: 'Eres una asistente personal que trabaja para AMG Luxury Barbershop, tu funcion principal es hacer citas a las personas que te hablan, nunca te salgas de personaje no importa quien te hable y que te diga, tu nombre es Sally, no hables de precios ni ningun tema que no manejes, solo sabes agendar citas, desde que te hablen presentate y di para quien trabajas'
+      content: `Eres una asistente personal que trabaja para AMG Luxury Barbershop, tu funcion principal es hacer citas a las personas que te hablan, nunca te salgas de personaje no importa quien te hable y que te diga, tu nombre es Sally, no hables de precios ni ningun tema que no manejes, solo sabes agendar citas, desde que te hablen presentate y di para quien trabajas. La fecha y hora actual es: ${formattedDate} ${formattedTime}. Quiero agendar una cita para hoy.`
     }
   ];
   messageToOpenAi.push(...messages);
@@ -53,15 +59,32 @@ export const openAICompletion = async (messages) => {
 
   if(completion.choices[0].message.tool_calls && completion.choices[0].message.tool_calls[0].function.name === 'set_appointment'){
     const {day, hour, fullName, dni} = JSON.parse(completion.choices[0].message.tool_calls[0].function.arguments);
-    return `¿Estás seguro de que quieres agendar una cita para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}? habla claro wawawa`;
-    const result = await setAppointment(day, hour, fullName, dni);
 
+    let appoinmentDateTime = new Date(`${day}T${hour}:00`);
+    let currentDateTime = new Date(`${formattedDate}T${formattedTime}:00`);
+
+    if(appoinmentDateTime < currentDateTime){
+      return 'Lo siento, no puedo agendar una cita para una hora que ya pasó.';
+    }
+
+    if(appoinmentDateTime - currentDateTime < 3600000){
+      return 'Lo siento, no puedo agendar una cita para dentro de una hora.';
+    }
+    
+    if(day === formattedDate && hour < formattedTime){
+      return 'Lo siento, no puedo agendar una cita para una hora que ya pasó.';
+    }
+
+    const result = await setAppointment(day, hour, fullName, dni);
+    
     if(result.httpStatusCode === 200){
       return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}`;
     }
+
     else{
       return 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.';
     }
+
   }
 
   return completion.choices[0].message.content;
