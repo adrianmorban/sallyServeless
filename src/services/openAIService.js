@@ -53,7 +53,7 @@ export const openAICompletion = async (messages) => {
 
   if(completion.choices[0].message.tool_calls && completion.choices[0].message.tool_calls[0].function.name === 'set_appointment'){
     const {day, hour, fullName, dni} = completion.choices[0].message.tool_calls[0].function.arguments;
-    return `¿Estás seguro de que quieres agendar una cita para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}? habla claro wawawa`;
+    return `¿Estás seguro de que quieres agendar una cita para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}? habla claro wawawa ${completion.choices[0].message.tool_calls[0].function.arguments}`;
     const result = await setAppointment(day, hour, fullName, dni);
 
     if(result.httpStatusCode === 200){
