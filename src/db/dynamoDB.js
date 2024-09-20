@@ -39,6 +39,7 @@ const updateSession = async (from, messages) => {
             last_name: last_name,
             language_code: language_code,
             messages: messages,
+            TTL: Math.floor(Date.now() / 1000) + 3600,
         },
         removeUndefinedValues: true,
         removeNullValues: true,
