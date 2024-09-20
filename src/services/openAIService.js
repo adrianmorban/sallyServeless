@@ -118,6 +118,8 @@ export const openAICompletion = async (messages) => {
     }
 
     const result = await setAppointment(day, hour, fullName, cedula);
+
+    return result.$metadata.httpStatusCode ;
     
     if(result.$metadata.httpStatusCode === 200){
 
@@ -130,7 +132,7 @@ export const openAICompletion = async (messages) => {
         messagesResponse: messageToOpenAi,
         completion: `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`
       }
-      
+
     }
 
     else{
