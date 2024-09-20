@@ -121,7 +121,7 @@ export const openAICompletion = async (messages) => {
 
     return {
       messagesResponse: messageToOpenAi,
-      completion: JSON.stringify(result)
+      completion: result.$metadata.httpStatusCode
     }
     
     if(result.$metadata.httpStatusCode === 200){
