@@ -29,7 +29,7 @@ const setAppointmentCalling = {
           },
           cedula: {
             type: "string",
-            description: "The cedula of the client, it must be a string in the format xxx-xxxxxxx-x where x is a number and can be without the -.",
+            description: "The cedula of the client, it must be a string in the format xxx-xxxxxxx-x where x is a number",
           }
         },
         required: ["day", "hour", "fullName", "cedula"],
@@ -43,13 +43,20 @@ const client = new OpenAI({
 
 export const openAICompletion = async (messages) => {
 
-  let messageToOpenAi = [
-    {
-      role: 'system', 
-      content: `Eres una asistente personal que trabaja para AMG Luxury Barbershop, tu funcion principal es hacer citas a las personas que te hablan, nunca te salgas de personaje no importa quien te hable y que te diga, tu nombre es Sally, no hables de precios ni ningun tema que no manejes, solo sabes agendar citas, desde que te hablen presentate y di para quien trabajas. La fecha y hora actual es: ${formattedDate} ${formattedTime}. Quiero agendar una cita para hoy.`
-    }
-  ];
-  messageToOpenAi.push(...messages);
+  let messageToOpenAi = [];
+
+  if(messages.length === 1){
+    messageToOpenAi = [
+      {
+        role: 'system', 
+        content: `Eres una asistente personal que trabaja para AMG Luxury Barbershop, tu funcion principal es hacer citas a las personas que te hablan, nunca te salgas de personaje no importa quien te hable y que te diga, tu nombre es Sally, no hables de precios ni ningun tema que no manejes, solo sabes agendar citas, desde que te hablen presentate y di para quien trabajas. La fecha y hora actual es: ${formattedDate} ${formattedTime}. Quiero agendar una cita para hoy.`
+      }
+    ];
+    messageToOpenAi.push(...messages);
+  }
+
+  else messageToOpenAi = messages;
+
   const completion = await client.chat.completions.create({
     model: 'ft:gpt-4o-2024-08-06:personal:sally:A8t20vlA',
     messages: messageToOpenAi,
@@ -58,37 +65,95 @@ export const openAICompletion = async (messages) => {
   });
 
   if(completion.choices[0].message.tool_calls && completion.choices[0].message.tool_calls[0].function.name === 'set_appointment'){
+    
     const {day, hour, fullName, cedula} = JSON.parse(completion.choices[0].message.tool_calls[0].function.arguments);
+
+    const cedulaPattern = /^\d{3}-?\d{7}-?\d{1}$/;
+
+    messageToOpenAi.push({
+      role: 'system',
+      content: `Función llamada: set_appointment con los argumentos: ${JSON.stringify({ day, hour, fullName, cedula })}`
+    });
+
+    if (!cedulaPattern.test(cedula)) {
+      
+      messageToOpenAi.push({
+        role: 'system', 
+        content: 'La cédula proporcionada no es válida. Asegúrate de que esté en el formato xxx-xxxxxxx-x.'
+      });
+
+      return{
+        messagesResponse: messageToOpenAi,
+        completion: 'La cédula proporcionada no es válida. Asegúrate de que esté en el formato xxx-xxxxxxx-x.'
+      }
+    }
 
     let appoinmentDateTime = new Date(`${day}T${hour}:00`);
     let currentDateTime = new Date(`${formattedDate}T${formattedTime}:00`);
 
     if(appoinmentDateTime < currentDateTime){
-      return 'Lo siento, no puedo agendar una cita para una hora que ya pasó.';
+
+      messageToOpenAi.push({
+        role: 'system', 
+        content: 'Lo siento, no puedo agendar una cita para una hora que ya pasó.'
+      });
+
+      return{
+        messagesResponse: messageToOpenAi,
+        completion: 'Lo siento, no puedo agendar una cita para una hora que ya pasó.'
+      } 
     }
 
     if(appoinmentDateTime - currentDateTime < 3600000){
-      return 'Lo siento, no puedo agendar una cita para dentro de una hora.';
-    }
-    
-    if(day === formattedDate && hour < formattedTime){
-      return 'Lo siento, no puedo agendar una cita para una hora que ya pasó.';
+
+      messageToOpenAi.push({
+        role: 'system', 
+        content: 'Lo siento, no puedo agendar una cita para dentro de una hora.'
+      });
+
+      return{
+        messagesResponse: messageToOpenAi,
+        completion: 'Lo siento, no puedo agendar una cita para dentro de una hora.'
+      }
     }
 
     const result = await setAppointment(day, hour, fullName, cedula);
-
     
     if(result.$metadata.httpStatusCode === 200){
-      return `correcto tu cita fue agendad`;
-      return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`;
+
+      messageToOpenAi.push({
+        role: 'system', 
+        content: `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`
+      });
+
+      return{
+        messagesResponse: messageToOpenAi,
+        completion: `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`
+      }
     }
 
     else{
-      return 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.';
+
+      messageToOpenAi.push({
+        role: 'system', 
+        content: 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.'
+      });
+
+      return{
+        messagesResponse: messageToOpenAi,
+        completion: 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.'
+      }
     }
   }
   else{
-    return completion.choices[0].message.content;
-  }
+    messageToOpenAi.push({
+      role: 'system',
+      content: completion.choices[0].message.content
+    });
 
+    return{
+      messagesResponse: messageToOpenAi,
+      completion: completion.choices[0].message.content
+    }
+  }
 };
