@@ -118,14 +118,8 @@ export const openAICompletion = async (messages) => {
     }
 
     const result = await setAppointment(day, hour, fullName, cedula);
-
-    return {
-      messagesResponse: messageToOpenAi,
-      completion: JSON.stringify(result.$metadata.httpStatusCode)
-    } ;
     
     if(result.$metadata.httpStatusCode === 200){
-
       messageToOpenAi.push({
         role: 'system', 
         content: `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`

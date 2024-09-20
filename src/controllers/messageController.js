@@ -3,7 +3,6 @@ import { openAICompletion } from '../services/openAIService.js';
 import { sendMessage } from '../services/telegramService.js';
 
 class MessageController {
-
     async getMessage(from, message, chat_id) {
         const {id} = from;
         try{
@@ -17,7 +16,6 @@ class MessageController {
         }
         catch(e){
             await sendMessage(id, JSON.stringify(e), chat_id);
-            // await sendMessage(id, 'Sorry, I am not able to process your request at the moment. Please try again later.', chat_id);
         }
     }
 }

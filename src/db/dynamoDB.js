@@ -62,7 +62,6 @@ const setAppointment = async (day, hour, fullName, dni) => {
         removeNullValues: true,
     });
     const response = await ddbDocClient.send(command);
-    return JSON.stringify(response);
     return response;
 }
 
