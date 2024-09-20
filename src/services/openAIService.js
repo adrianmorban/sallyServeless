@@ -27,9 +27,9 @@ const setAppointmentCalling = {
             type: "string",
             description: "The full name of the client.",
           },
-          dni: {
+          cedula: {
             type: "string",
-            description: "The DNI of the client, it must be a string in the format xxx-xxxxxxx-x where x is a number and can be without the -.",
+            description: "The cedula of the client, it must be a string in the format xxx-xxxxxxx-x where x is a number and can be without the -.",
           }
         },
         required: ["day", "hour", "fullName", "cedula"],
@@ -58,7 +58,7 @@ export const openAICompletion = async (messages) => {
   });
 
   if(completion.choices[0].message.tool_calls && completion.choices[0].message.tool_calls[0].function.name === 'set_appointment'){
-    const {day, hour, fullName, dni} = JSON.parse(completion.choices[0].message.tool_calls[0].function.arguments);
+    const {day, hour, fullName, cedula} = JSON.parse(completion.choices[0].message.tool_calls[0].function.arguments);
 
     let appoinmentDateTime = new Date(`${day}T${hour}:00`);
     let currentDateTime = new Date(`${formattedDate}T${formattedTime}:00`);
@@ -75,18 +75,19 @@ export const openAICompletion = async (messages) => {
       return 'Lo siento, no puedo agendar una cita para una hora que ya pasó.';
     }
 
-    const result = await setAppointment(day, hour, fullName, dni);
+    const result = await setAppointment(day, hour, fullName, cedula);
 
     
     if(result.$metadata.httpStatusCode === 200){
-      return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}`;
+      return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`;
     }
 
     else{
       return 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.';
     }
-
+  }
+  else{
+    return completion.choices[0].message.content;
   }
 
-  return completion.choices[0].message.content;
 };
