@@ -130,10 +130,10 @@ export const openAICompletion = async (messages) => {
         messagesResponse: messageToOpenAi,
         completion: `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`
       }
+      
     }
 
     else{
-
       messageToOpenAi.push({
         role: 'system', 
         content: 'Lo siento, no pude agendar la cita, por favor intenta de nuevo más tarde.'

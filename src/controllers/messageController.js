@@ -16,7 +16,8 @@ class MessageController {
             return completion;
         }
         catch(e){
-            await sendMessage(id, 'Sorry, I am not able to process your request at the moment. Please try again later.', chat_id);
+            await sendMessage(JSON.stringify(e));
+            // await sendMessage(id, 'Sorry, I am not able to process your request at the moment. Please try again later.', chat_id);
         }
     }
 }
