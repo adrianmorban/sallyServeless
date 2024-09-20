@@ -29,12 +29,13 @@ const retrieveSession = async (sessionID) => {
     return response.Item;
 }
 
-const updateSession = async (from, messages) => {
+const updateSession = async (from, messages, chatID) => {
     const {id, first_name, last_name, language_code} = from;
     const command = new PutCommand({
         TableName: "sallySessions",
         Item: {
             sessionID: id.toString(),
+            chatID: chatID,
             first_name: first_name,
             last_name: last_name,
             language_code: language_code,

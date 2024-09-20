@@ -10,7 +10,7 @@ class MessageController {
             const messages = session ? session.messages : [];
             messages.push({role: 'user', content: message});
             const {completion, messagesResponse} = await openAICompletion(messages);
-            await updateSession(from, messagesResponse);
+            await updateSession(from, messagesResponse, chat_id);
             await sendMessage(id, completion, chat_id);
             return completion;
         }
