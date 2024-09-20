@@ -79,6 +79,7 @@ export const openAICompletion = async (messages) => {
 
     
     if(result.$metadata.httpStatusCode === 200){
+      return `correcto tu cita fue agendad`;
       return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con cédula ${cedula}`;
     }
 
