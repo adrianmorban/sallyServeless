@@ -76,6 +76,8 @@ export const openAICompletion = async (messages) => {
     }
 
     const result = await setAppointment(day, hour, fullName, dni);
+
+    return result;
     
     if(result.httpStatusCode === 200){
       return `Cita agendada para el día ${day} a las ${hour} a nombre de ${fullName} con DNI ${dni}`;
