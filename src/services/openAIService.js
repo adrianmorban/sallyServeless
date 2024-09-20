@@ -119,11 +119,6 @@ export const openAICompletion = async (messages) => {
 
     const result = await setAppointment(day, hour, fullName, cedula);
 
-    return {
-      messagesResponse: messageToOpenAi,
-      completion: result.$metadata.httpStatusCode
-    }
-    
     if(result.$metadata.httpStatusCode === 200){
       messageToOpenAi.push({
         role: 'system', 
